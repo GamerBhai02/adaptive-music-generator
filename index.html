@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Music Generator for Workflows</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">🎵 Adaptive Music Generator</h1>
+                <div class="header-controls">
+                    <button id="themeToggle" class="btn btn--outline theme-toggle" aria-label="Toggle theme">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <div class="mode-indicator">
+                        <span class="mode-label">Mode:</span>
+                        <span id="currentMode" class="mode-value">Focus Mode</span>
+                    </div>
+                    <button id="startStopBtn" class="btn btn--primary">Start Monitoring</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="dashboard">
+            <!-- Activity Monitor Section -->
+            <section class="dashboard-section">
+                <h2>Activity Monitor</h2>
+                <div class="activity-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Typing Speed</div>
+                        <div class="metric-value" id="typingSpeed">0</div>
+                        <div class="metric-unit">WPM</div>
+                        <div class="metric-status" id="typingStatus">Ready</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Mouse Activity</div>
+                        <div class="metric-value" id="mouseActivity">Inactive</div>
+                        <div class="metric-unit">Status</div>
+                        <div class="metric-status" id="mouseStatus">Monitoring</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Current State</div>
+                        <div class="metric-value" id="activityState">Idle</div>
+                        <div class="metric-unit">Mode</div>
+                        <div class="metric-status" id="stateStatus">Detecting</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Session Time</div>
+                        <div class="metric-value" id="sessionTime">00:00</div>
+                        <div class="metric-unit">Duration</div>
+                        <div class="metric-status" id="sessionStatus">Stopped</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Music Controls Section -->
+            <section class="dashboard-section">
+                <h2>Music Controls & Real-Time Adaptation</h2>
+                <div class="music-controls">
+                    <div class="controls-row">
+                        <button id="playPauseBtn" class="btn btn--secondary" disabled>▶ Play</button>
+                        <div class="volume-control">
+                            <label for="volumeSlider">Volume:</label>
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.6" class="form-control">
+                            <span id="volumeValue">60%</span>
+                        </div>
+                        <div class="bpm-display">
+                            <span class="bpm-label">BPM:</span>
+                            <span id="currentBPM" class="bpm-value">60</span>
+                            <div class="bpm-indicator">
+                                <div class="bpm-bar" id="bpmBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="controls-row">
+                        <div class="mode-selector">
+                            <label for="musicMode">Music Mode:</label>
+                            <select id="musicMode" class="form-control">
+                                <option value="focus">Focus Mode (50-70 BPM)</option>
+                                <option value="break">Break Mode (40-60 BPM)</option>
+                                <option value="deadline">Deadline Rush (90-120 BPM)</option>
+                            </select>
+                        </div>
+                        <div class="instrument-selector">
+                            <label for="instrumentType">Instrument:</label>
+                            <select id="instrumentType" class="form-control">
+                                <option value="pad">Ambient Pad</option>
+                                <option value="piano">Piano</option>
+                                <option value="synth">Synth Lead</option>
+                                <option value="bass">Bass</option>
+                                <option value="strings">Strings</option>
+                            </select>
+                        </div>
+                        <div class="adaptation-status">
+                            <span class="adaptation-label">Music Status:</span>
+                            <span id="musicAdaptationStatus" class="adaptation-value">Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visualization Area -->
+            <section class="dashboard-section">
+                <h2>Real-Time Visualization</h2>
+                <div class="visualization-grid">
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <h3>Activity Timeline</h3>
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <h3>Music Adaptation</h3>
+                        <canvas id="musicChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Demo Text Area -->
+            <section class="dashboard-section">
+                <h2>Demo Activity Area</h2>
+                <div class="demo-area">
+                    <div class="demo-header">
+                        <h3>Type here to trigger music adaptation</h3>
+                        <div class="adaptation-indicators">
+                            <div class="indicator" id="keyboardIndicator">
+                                <span class="indicator-label">Keyboard:</span>
+                                <span class="indicator-status">Inactive</span>
+                            </div>
+                            <div class="indicator" id="musicIndicator">
+                                <span class="indicator-label">Music Adapting:</span>
+                                <span class="indicator-status">No</span>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea id="demoTextArea" class="form-control demo-textarea" 
+                              placeholder="Start typing here to see real-time music adaptation...
+
+🎵 Try different typing patterns:
+• Type slowly and steadily for calm, focused music
+• Type quickly in bursts for energetic music  
+• Stop typing to trigger re-engagement mode
+• Move your mouse around for additional activity
+
+The music will change tempo, instruments, and complexity based on your activity patterns in real-time."></textarea>
+                    <div class="demo-instructions">
+                        <p><strong>Instructions:</strong> Type in the text area above and move your mouse to simulate workflow activity. The music will adapt in real-time based on your activity patterns. Watch the BPM counter and listen for changes in tempo and instruments.</p>
+                        <div class="demo-stats">
+                            <div class="stat">
+                                <span class="stat-label">Characters:</span>
+                                <span id="charCount">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Words:</span>
+                                <span id="wordCount">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Last Activity:</span>
+                                <span id="lastActivity">Never</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Panel -->
+            <section class="dashboard-section">
+                <h2>Settings</h2>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="sensitivitySlider">Activity Sensitivity:</label>
+                        <input type="range" id="sensitivitySlider" min="0.1" max="1" step="0.1" value="0.7" class="form-control">
+                        <span id="sensitivityValue">70%</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="idleThreshold">Idle Threshold (seconds):</label>
+                        <input type="range" id="idleThreshold" min="5" max="30" step="5" value="10" class="form-control">
+                        <span id="idleValue">10s</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="bpmSmoothing">BPM Smoothing:</label>
+                        <input type="range" id="bpmSmoothing" min="0.05" max="0.3" step="0.05" value="0.15" class="form-control">
+                        <span id="smoothingValue">15%</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="activityWindow">Activity Window (seconds):</label>
+                        <input type="range" id="activityWindow" min="15" max="60" step="15" value="30" class="form-control">
+                        <span id="windowValue">30s</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Dashboard -->
+            <section class="dashboard-section">
+                <h2>Session Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h4>Productivity Score</h4>
+                        <div class="analytics-value" id="productivityScore">85%</div>
+                        <div class="analytics-trend" id="productivityTrend">↗ Active session</div>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Average WPM</h4>
+                        <div class="analytics-value" id="averageWPM">0</div>
+                        <div class="analytics-trend" id="wpmTrend">→ Steady pace</div>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Music Adaptations</h4>
+                        <div class="analytics-value" id="adaptationCount">0</div>
+                        <div class="analytics-trend" id="adaptationTrend">BPM changes this session</div>
+                    </div>
+                    <div class="analytics-card">
+                        <h4>Active Time</h4>
+                        <div class="analytics-value" id="activeTime">00:00</div>
+                        <div class="analytics-trend" id="activeTimeTrend">0% of session time</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">System:</span>
+                <span id="systemStatus" class="status-value">Ready</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Audio Context:</span>
+                <span id="audioStatus" class="status-value">Inactive</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Monitoring:</span>
+                <span id="monitoringStatus" class="status-value">Stopped</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Theme:</span>
+                <span id="themeStatus" class="status-value">Auto</span>
+            </div>
+        </div>
+
+        <!-- Theme Toggle Animation Overlay -->
+        <div class="theme-transition-overlay" id="themeTransitionOverlay"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
